@@ -1,9 +1,6 @@
 import re
 
-def concat_first_last():
-  file1 = open('input/day1.txt', 'r')
-  lines = file1.readlines()
-  
+def concat_first_last(lines):
   sum = 0
   # Strips the newline character
   for line in lines:
@@ -12,5 +9,7 @@ def concat_first_last():
       sum += concat
   return sum
 
-res = concat_first_last()
+file1 = open('input/day1.txt', 'r')
+lines = file1.readlines()
+res = concat_first_last(lines)
 print(res)

@@ -1,39 +1,55 @@
-import re 
+import re, sys
 
-def isValid(r, g, b, valid_r, valid_g, valid_b):
+def check_valid(r, g, b, valid_r, valid_g, valid_b):
   if (r <= valid_r and g <= valid_g and b <= valid_b):
     return True
-  return False
+  else:
+    return False
 
-def soln():
-  sum = 0
-  file = open('input/day2.txt', 'r')
-  lines = file.readlines()
+def get_num_cubes(token, color):
+  x = re.search("\d+ " + color, token)
+  if (x):
+    res = int(x.group().split(" ")[0])
+  else:
+    res = 0
+  return res
+
+def soln(lines):
+  sum_valid_ids = 0
+  sum_powers = 0
   for line in lines:
-    tok_lst = re.split('; |:', line)
-    isValidGame = True
-    curGame = int(tok_lst[0].split(" ")[1])
-    for token in tok_lst:
-      print(token)
-      r = 0
-      g = 0
-      b = 0
-      red = re.search("\d red", token)
-      if (red):
-        r = int(red.group()[0])
-      green = re.search("\d green", token)
-      if (green):
-        g = int(green.group()[0])
-      blue = re.search("\d blue", token)
-      if (blue): 
-        b = int(blue.group()[0])
+    token_lst = re.split('; |:', line)
+    is_valid_game = True
+    cur_game_id = int(token_lst[0].split(" ")[1])
 
-      if (not isValid(r, g, b, 12, 13, 14)):
-        isValidGame = False
-    if (isValidGame):
-      sum += curGame
+    r_max = 0
+    g_max = 0
+    b_max = 0
 
-  return sum 
+    for i in range(1, len(token_lst)):
+      token = token_lst[i]
+      r = get_num_cubes(token, "red")
+      g = get_num_cubes(token, "green")
+      b = get_num_cubes(token, "blue")
 
-x = soln()
+      # update min vals
+      r_max = max(r_max, r) 
+      g_max = max(g_max, g) 
+      b_max = max(b_max, b) 
+
+      if (not check_valid(r, g, b, 12, 13, 14)):
+        is_valid_game = False
+    
+    # calculate power and append
+    sum_powers += (r_max * g_max * b_max)
+    
+    if (is_valid_game):
+      sum_valid_ids += cur_game_id
+
+  return sum_valid_ids, sum_powers
+
+file = open('input/day2.txt', 'r')
+lines = file.readlines()
+x = soln(lines)
+# tuple (part a, part b)
 print(x)
